@@ -230,7 +230,7 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="fetch_bedmap2"><a class="viewcode-back" href="../../api/generated/rockhound.fetch_bedmap2.html#rockhound.fetch_bedmap2">[docs]</a><span class="k">def</span> <span class="nf">fetch_bedmap2</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">load</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="fetch_bedmap2"><a class="viewcode-back" href="../../api/generated/rockhound.fetch_bedmap2.html#rockhound.fetch_bedmap2">[docs]</a><span class="k">def</span> <span class="nf">fetch_bedmap2</span><span class="p">(</span><span class="n">datasets</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">load</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fetch the Bedmap2 datasets for Antarctica.</span>
 
@@ -261,8 +261,11 @@
 <span class="sd">      relative to EIGEN-GL04C geoid (to convert back to WGS84, add this grid)</span>
 
 <span class="sd">    .. warning ::</span>
-<span class="sd">        Loading a great number of datasets may require a fair amount of memory that</span>
-<span class="sd">        could crash your system. We recommend loading only the needed datasets.</span>
+<span class="sd">        Loading datasets into memory may require a fair amount of memory.</span>
+<span class="sd">        In order to prevent this, the function loads the datasets as Dask arrays if</span>
+<span class="sd">        ``chunks`` is not ``None``.</span>
+<span class="sd">        Be careful when doing operations that loads the entire datasets into memory,</span>
+<span class="sd">        like plotting or performing some computations.</span>
 
 <span class="sd">    .. warning ::</span>
 <span class="sd">        Loading any dataset along with ``thickness_uncertainty_5km`` would modify the</span>
@@ -276,6 +279,14 @@
 <span class="sd">        Wether to load the data into an :class:`xarray.Dataset` or just return the</span>
 <span class="sd">        path to the downloaded data tiff files. If False, will return a list with the</span>
 <span class="sd">        paths to the files corresponding to *datasets*.</span>
+<span class="sd">    chunks : int, tuple or dict</span>
+<span class="sd">        Chunk sizes along each dimension. This argument is passed to the</span>
+<span class="sd">        :func:`xarray.open_rasterio` function in order to obtain</span>
+<span class="sd">        `Dask arrays &lt;https://docs.dask.org/en/latest/array.html&gt;`_ inside the</span>
+<span class="sd">        returned :class:`xarray.Dataset`.</span>
+<span class="sd">        This helps to read the dataset without loading it entirely into memory.</span>
+<span class="sd">    **kwargs</span>
+<span class="sd">        Extra parameters passed to the :func:`xarray.open_rasterio` function.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -294,7 +305,7 @@
         <span class="k">return</span> <span class="p">[</span><span class="n">get_fname</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">fnames</span><span class="p">)</span> <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">]</span>
     <span class="n">arrays</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">:</span>
-        <span class="n">array</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_rasterio</span><span class="p">(</span><span class="n">get_fname</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">fnames</span><span class="p">))</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_rasterio</span><span class="p">(</span><span class="n">get_fname</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">fnames</span><span class="p">),</span> <span class="n">chunks</span><span class="o">=</span><span class="n">chunks</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c1"># Replace no data values with nans</span>
         <span class="n">array</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">array</span> <span class="o">!=</span> <span class="n">array</span><span class="o">.</span><span class="n">nodatavals</span><span class="p">)</span>
         <span class="c1"># Remove &quot;band&quot; dimension and coordinate</span>
@@ -345,7 +356,7 @@
     <p>
         &copy; Copyright 2018-2019, The RockHound Developers
       <span class="lastupdated">
-        Last updated on May 21, 2019.
+        Last updated on Jun 25, 2019.
       </span>
 
     </p>

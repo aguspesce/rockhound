@@ -227,7 +227,7 @@
 <h1>rockhound.fetch_bedmap2<a class="headerlink" href="#rockhound-fetch-bedmap2" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="rockhound.fetch_bedmap2">
-<code class="descclassname">rockhound.</code><code class="descname">fetch_bedmap2</code><span class="sig-paren">(</span><em>datasets</em>, <em>*</em>, <em>load=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/rockhound/bedmap2.html#fetch_bedmap2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rockhound.fetch_bedmap2" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">rockhound.</code><code class="descname">fetch_bedmap2</code><span class="sig-paren">(</span><em>datasets</em>, <em>*</em>, <em>load=True</em>, <em>chunks=1000</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/rockhound/bedmap2.html#fetch_bedmap2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rockhound.fetch_bedmap2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fetch the Bedmap2 datasets for Antarctica.</p>
 <p>Bedmap2 is a suite of gridded products describing surface elevation,
 ice-thickness, the sea floor and subglacial bed elevation of the Antarctic south
@@ -255,8 +255,11 @@ relative to EIGEN-GL04C geoid (to convert back to WGS84, add this grid)</li>
 </ul>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">Loading a great number of datasets may require a fair amount of memory that
-could crash your system. We recommend loading only the needed datasets.</p>
+<p class="last">Loading datasets into memory may require a fair amount of memory.
+In order to prevent this, the function loads the datasets as Dask arrays if
+<code class="docutils literal notranslate"><span class="pre">chunks</span></code> is not <code class="docutils literal notranslate"><span class="pre">None</span></code>.
+Be careful when doing operations that loads the entire datasets into memory,
+like plotting or performing some computations.</p>
 </div>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
@@ -275,6 +278,16 @@ shape of the <code class="docutils literal notranslate"><span class="pre">grid</
 <dd><p class="first last">Wether to load the data into an <a class="reference external" href="http://xarray.pydata.org/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v0.12.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.Dataset</span></code></a> or just return the
 path to the downloaded data tiff files. If False, will return a list with the
 paths to the files corresponding to <em>datasets</em>.</p>
+</dd>
+<dt><strong>chunks</strong> <span class="classifier-delimiter">:</span> <span class="classifier">int, tuple or dict</span></dt>
+<dd><p class="first last">Chunk sizes along each dimension. This argument is passed to the
+<a class="reference external" href="http://xarray.pydata.org/en/stable/generated/xarray.open_rasterio.html#xarray.open_rasterio" title="(in xarray v0.12.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">xarray.open_rasterio</span></code></a> function in order to obtain
+<a class="reference external" href="https://docs.dask.org/en/latest/array.html">Dask arrays</a> inside the
+returned <a class="reference external" href="http://xarray.pydata.org/en/stable/generated/xarray.Dataset.html#xarray.Dataset" title="(in xarray v0.12.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">xarray.Dataset</span></code></a>.
+This helps to read the dataset without loading it entirely into memory.</p>
+</dd>
+<dt><strong>**kwargs</strong></dt>
+<dd><p class="first last">Extra parameters passed to the <a class="reference external" href="http://xarray.pydata.org/en/stable/generated/xarray.open_rasterio.html#xarray.open_rasterio" title="(in xarray v0.12.1)"><code class="xref py py-func docutils literal notranslate"><span class="pre">xarray.open_rasterio</span></code></a> function.</p>
 </dd>
 </dl>
 </td>
@@ -321,7 +334,7 @@ paths to the files corresponding to <em>datasets</em>.</p>
     <p>
         &copy; Copyright 2018-2019, The RockHound Developers
       <span class="lastupdated">
-        Last updated on May 21, 2019.
+        Last updated on Jun 25, 2019.
       </span>
 
     </p>

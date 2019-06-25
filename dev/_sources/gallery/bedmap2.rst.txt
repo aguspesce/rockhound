@@ -35,7 +35,7 @@ into a :class:`xarray.Dataset` object.
       * y          (y) float64 3.333e+06 3.332e+06 ... -3.332e+06 -3.333e+06
       * x          (x) float64 -3.333e+06 -3.332e+06 ... 3.332e+06 3.333e+06
     Data variables:
-        thickness  (y, x) float64 nan nan nan nan nan nan ... nan nan nan nan nan
+        thickness  (y, x) float64 dask.array<shape=(6667, 6667), chunksize=(1000, 1000)>
     Attributes:
         title:                Bedmap2
         projection:           Antarctic Polar Stereographic
@@ -72,7 +72,7 @@ into a :class:`xarray.Dataset` object.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  25.111 seconds)
+   **Total running time of the script:** ( 0 minutes  25.736 seconds)
 
 
 .. _sphx_glr_download_gallery_bedmap2.py:
